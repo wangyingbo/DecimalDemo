@@ -10,6 +10,9 @@
 #import <UIKit/UIKit.h>
 
 
+NS_ASSUME_NONNULL_BEGIN
+
+/**小数比较结果*/
 typedef NS_ENUM(NSInteger,FBCompareResult) {
     /**默认*/
     FBCompareResultDefult = 0,
@@ -23,52 +26,102 @@ typedef NS_ENUM(NSInteger,FBCompareResult) {
     FBCompareResultError,
 };
 
-NS_ASSUME_NONNULL_BEGIN
+/**错误码*/
+typedef NS_ENUM(NSInteger,DecimalErrorCode) {
+    /**第一个参数不能被初始化为NSDecimalNumber对象*/
+    DecimalErrorCodeFirstNotANumber = 1,
+    /**第二个参数不能被初始化为NSDecimalNumber对象*/
+    DecimalErrorCodeSecondNotANumber,
+    /**分母为0时的code*/
+    DecimalErrorCodeDivideByZero,
+};
+
+/**不能被初始化为NSDecimalNumber对象时errorDomain*/
+extern NSString * const DecimalErrorNotANumberDomain;
+/**分母为0时errorDomain*/
+extern NSString * const DecimalErrorDivideByZeroDomain;
+
 
 @interface NSString (Decimal)
 
+#pragma mark - extern "C"
+
+extern FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber *num2);
+extern NSDecimalNumber * addDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error);
+extern NSDecimalNumber * subtractDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error);
+extern NSDecimalNumber * multiplyDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error);
+extern NSDecimalNumber * divideDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error);
+extern NSDecimalNumber * roundingDecimal(NSDecimalNumber *ouncesDecimal,NSRoundingMode mode,NSInteger scale, NSError **error);
+
 #pragma mark - compare
-/// string和float比较
-/// @param f float参数
-- (FBCompareResult)compareWithFloat:(CGFloat)f;
+
+/// string和double比较
+/// @param d double参数
+- (FBCompareResult)compareWithDouble:(double)d;
 
 /// string和string比较
 /// @param string string参数
 - (FBCompareResult)compareWithString:(NSString *)string;
 
 /// 两个浮点型比较
-/// @param floatA floatA description
-/// @param floatB floatB description
-+ (FBCompareResult)compareFloatA:(CGFloat)floatA withFloatB:(CGFloat)floatB;
+/// @param doubleA doubleA description
+/// @param doubleB doubleB description
++ (FBCompareResult)compareDoubleA:(double)doubleA withDoubleB:(double)doubleB;
 
 #pragma mark - adding
 
-- (NSDecimalNumber *)byAddFloat:(CGFloat)f;
+- (NSDecimalNumber *)byAddDouble:(double)d;
 
 - (NSDecimalNumber *)byAddString:(NSString *)string;
 
+- (NSDecimalNumber *)byAddDouble:(double)d error:(NSError **)error;
+
+- (NSDecimalNumber *)byAddString:(NSString *)string error:(NSError **)error;
+
 #pragma mark - subtracting
 
-- (NSDecimalNumber *)bySubtractFloat:(CGFloat)f;
+- (NSDecimalNumber *)bySubtractDouble:(double)d;
 
 - (NSDecimalNumber *)bySubtractString:(NSString *)string;
 
+- (NSDecimalNumber *)bySubtractDouble:(double)d error:(NSError **)error;
+
+- (NSDecimalNumber *)bySubtractString:(NSString *)string error:(NSError **)error;
 
 #pragma mark - multiplying
 
-- (NSDecimalNumber *)byMultiplyFloat:(CGFloat)f;
+- (NSDecimalNumber *)byMultiplyDouble:(double)d;
 
 - (NSDecimalNumber *)byMultiplyString:(NSString *)string;
 
+- (NSDecimalNumber *)byMultiplyDouble:(double)d error:(NSError **)error;
+
+- (NSDecimalNumber *)byMultiplyString:(NSString *)string error:(NSError **)error;
 
 #pragma mark - dividing
 
-- (NSDecimalNumber *)byDivideFloat:(CGFloat)f;
+- (NSDecimalNumber *)byDivideDouble:(double)d;
 
-- (NSDecimalNumber *)byDividesString:(NSString *)string;
+- (NSDecimalNumber *)byDivideString:(NSString *)string;
 
+- (NSDecimalNumber *)byDivideDouble:(double)d error:(NSError **)error;
 
+- (NSDecimalNumber *)byDivideString:(NSString *)string error:(NSError **)error;
 
+#pragma mark - rounding
+
+/// 进位mode
+/// @param mode 进位的mode，具体参考NSRoundingMode
+/// @param position 保留到小数点后几位
+/// @param error error description 
+- (NSDecimalNumber *)roundingMode:(NSRoundingMode)mode afterPoint:(NSInteger)position error:(NSError **)error;
+
+/// double类型的数据类型进位
+/// @param d double数据
+/// @param mode 进位模式，参考NSRoundingMode
+/// @param position 保留小数点后几位
+/// @param error error description
++ (NSDecimalNumber *)roundingDouble:(double)d mode:(NSRoundingMode)mode afterPoint:(NSInteger)position error:(NSError **)error;
 
 @end
 

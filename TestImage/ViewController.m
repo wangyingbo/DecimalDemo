@@ -21,7 +21,6 @@
 //    UIImage *image = [UIImage imageNamed:name];
 //    NSString *imagePath =[[NSBundle mainBundle] pathForResource:@"scanner" ofType:@"jpeg"];
 //    UIImage *fileImage = [UIImage imageWithContentsOfFile:name];
-//
 //    NSLog(@"path:%@",imagePath);
     
     

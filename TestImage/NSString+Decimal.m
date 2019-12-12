@@ -8,14 +8,16 @@
 
 #import "NSString+Decimal.h"
 
+NSString * const DecimalErrorNotANumberDomain = @"DecimalErrorNotANumberDomain";
+NSString * const DecimalErrorDivideByZeroDomain = @"DecimalNumberDivideByZeroException";
 
 @implementation NSString (Decimal)
 
 #pragma mark - compare
-- (FBCompareResult)compareWithFloat:(CGFloat)f {
+- (FBCompareResult)compareWithDouble:(double)d {
     
     NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
-    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:f].decimalValue];
+    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithDouble:d].decimalValue];
     
     return compareDecimal(decimalNum1, decimalNum2);
 }
@@ -28,11 +30,11 @@
     return compareDecimal(decimalNum1, decimalNum2);
 }
 
-+ (FBCompareResult)compareFloatA:(CGFloat)floatA withFloatB:(CGFloat)floatB
++ (FBCompareResult)compareDoubleA:(double)doubleA withDoubleB:(double)doubleB
 {
     
-    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:floatA].decimalValue];
-    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:floatB].decimalValue];
+    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithDouble:doubleA].decimalValue];
+    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithDouble:doubleB].decimalValue];
     
     return compareDecimal(decimalNum1, decimalNum2);
 }
@@ -40,7 +42,7 @@
 /// 比较两个num的大小
 /// @param num1 num1 description
 /// @param num2 num1 description
-NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber *num2) {
+inline FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber *num2) {
     
     FBCompareResult result = FBCompareResultDefult;
     if ([num1 isEqualToNumber:NSDecimalNumber.notANumber] || [num2 isEqualToNumber:NSDecimalNumber.notANumber]) {
@@ -77,36 +79,36 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
 
 #pragma mark - adding
 
-- (NSDecimalNumber *)byAddFloat:(CGFloat)f {
-    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
-    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:f].decimalValue];
-    
-    //判断是否存在
-    if ([decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
-        if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
-            return decimalNum2;
-        }else {
-            return NSDecimalNumber.zero;
-        }
-    }
-    if ([decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
-        if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
-            return decimalNum1;
-        }else {
-            return NSDecimalNumber.zero;
-        }
-    }
-    
-    NSDecimalNumber *result = [decimalNum1 decimalNumberByAdding:decimalNum2];
-    return result;
+- (NSDecimalNumber *)byAddDouble:(double)d {
+    return [self byAddDouble:d error:nil];
 }
 
 - (NSDecimalNumber *)byAddString:(NSString *)string {
+    return [self byAddString:string error:nil];
+}
+
+- (NSDecimalNumber *)byAddDouble:(double)d error:(NSError *__autoreleasing  _Nullable *)error {
+    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
+    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithDouble:d].decimalValue];
+    
+    return addDecimal(decimalNum1, decimalNum2, error);
+}
+
+- (NSDecimalNumber *)byAddString:(NSString *)string error:(NSError *__autoreleasing  _Nullable *)error {
     NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
     NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithString:string];
     
+    return addDecimal(decimalNum1, decimalNum2, error);
+}
+
+inline NSDecimalNumber * addDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error) {
     //判断是否存在
     if ([decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
+                code:DecimalErrorCodeFirstNotANumber
+            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+        }
         if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum2;
         }else {
@@ -114,6 +116,11 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
         }
     }
     if ([decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
+                code:DecimalErrorCodeSecondNotANumber
+            userInfo:@{NSLocalizedDescriptionKey:@"the second parameter is can not be a decimalNumber"}];
+        }
         if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum1;
         }else {
@@ -127,36 +134,36 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
 
 #pragma mark - subtracting
 
-- (NSDecimalNumber *)bySubtractFloat:(CGFloat)f {
-    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
-    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:f].decimalValue];
-    
-    //判断是否存在
-    if ([decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
-        if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
-            return [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:-f].decimalValue];;
-        }else {
-            return NSDecimalNumber.zero;
-        }
-    }
-    if ([decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
-        if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
-            return decimalNum1;
-        }else {
-            return NSDecimalNumber.zero;
-        }
-    }
-    
-    NSDecimalNumber *result = [decimalNum1 decimalNumberBySubtracting:decimalNum2];
-    return result;
+- (NSDecimalNumber *)bySubtractDouble:(double)d {
+    return [self bySubtractDouble:d error:nil];
 }
 
 - (NSDecimalNumber *)bySubtractString:(NSString *)string {
+    return [self bySubtractString:string error:nil];
+}
+
+- (NSDecimalNumber *)bySubtractDouble:(double)d error:(NSError *__autoreleasing  _Nullable *)error {
+    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
+    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithDouble:d].decimalValue];
+    
+    return subtractDecimal(decimalNum1, decimalNum2, error);
+}
+
+- (NSDecimalNumber *)bySubtractString:(NSString *)string error:(NSError *__autoreleasing  _Nullable *)error {
     NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
     NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithString:string];
     
+    return subtractDecimal(decimalNum1, decimalNum2, error);
+}
+
+inline NSDecimalNumber * subtractDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error) {
     //判断是否存在
     if ([decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
+                code:DecimalErrorCodeFirstNotANumber
+            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+        }
         if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:-decimalNum2.floatValue].decimalValue];;
         }else {
@@ -164,6 +171,11 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
         }
     }
     if ([decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
+                code:DecimalErrorCodeSecondNotANumber
+            userInfo:@{NSLocalizedDescriptionKey:@"the second parameter is can not be a decimalNumber"}];
+        }
         if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum1;
         }else {
@@ -177,36 +189,36 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
 
 #pragma mark - multiplying
 
-- (NSDecimalNumber *)byMultiplyFloat:(CGFloat)f {
-    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
-    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:f].decimalValue];
-    
-    //判断是否存在
-    if ([decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
-        if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
-            return decimalNum2;
-        }else {
-            return NSDecimalNumber.one;
-        }
-    }
-    if ([decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
-        if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
-            return decimalNum1;
-        }else {
-            return NSDecimalNumber.one;
-        }
-    }
-    
-    NSDecimalNumber *result = [decimalNum1 decimalNumberByMultiplyingBy:decimalNum2];
-    return result;
+- (NSDecimalNumber *)byMultiplyDouble:(double)d {
+    return [self byMultiplyDouble:d error:nil];
 }
 
 - (NSDecimalNumber *)byMultiplyString:(NSString *)string {
+    return [self byMultiplyString:string error:nil];
+}
+
+- (NSDecimalNumber *)byMultiplyDouble:(double)d error:(NSError *__autoreleasing  _Nullable *)error {
+    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
+    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithDouble:d].decimalValue];
+    
+    return multiplyDecimal(decimalNum1, decimalNum2, error);
+}
+
+- (NSDecimalNumber *)byMultiplyString:(NSString *)string error:(NSError *__autoreleasing  _Nullable *)error {
     NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
     NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithString:string];
     
+    return multiplyDecimal(decimalNum1, decimalNum2, error);
+}
+
+inline NSDecimalNumber * multiplyDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error) {
     //判断是否存在
     if ([decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
+                code:DecimalErrorCodeFirstNotANumber
+            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+        }
         if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum2;
         }else {
@@ -214,6 +226,11 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
         }
     }
     if ([decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
+                code:DecimalErrorCodeSecondNotANumber
+            userInfo:@{NSLocalizedDescriptionKey:@"the second parameter is can not be a decimalNumber"}];
+        }
         if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum1;
         }else {
@@ -227,12 +244,36 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
 
 #pragma mark - dividing
 
-- (NSDecimalNumber *)byDivideFloat:(CGFloat)f {
+- (NSDecimalNumber *)byDivideDouble:(double)d {
+    return [self byDivideDouble:d error:nil];
+}
+
+- (NSDecimalNumber *)byDivideString:(NSString *)string {
+    return [self byDivideString:string error:nil];
+}
+
+- (NSDecimalNumber *)byDivideDouble:(double)d error:(NSError *__autoreleasing  _Nullable *)error {
     NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
-    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:f].decimalValue];
+    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithDouble:d].decimalValue];
     
+    return divideDecimal(decimalNum1, decimalNum2, error);
+}
+
+- (NSDecimalNumber *)byDivideString:(NSString *)string error:(NSError *__autoreleasing  _Nullable *)error {
+    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
+    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithString:string];
+    
+    return divideDecimal(decimalNum1, decimalNum2, error);
+}
+
+inline NSDecimalNumber * divideDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error) {
     //判断是否存在
     if ([decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
+                code:DecimalErrorCodeFirstNotANumber
+            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+        }
         if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum2;
         }else {
@@ -240,6 +281,11 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
         }
     }
     if ([decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
+                code:DecimalErrorCodeSecondNotANumber
+            userInfo:@{NSLocalizedDescriptionKey:@"the second parameter is can not be a decimalNumber"}];
+        }
         if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum1;
         }else {
@@ -247,6 +293,11 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
         }
     }
     if ([decimalNum2 isEqualToNumber:NSDecimalNumber.zero]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorDivideByZeroDomain
+                code:DecimalErrorCodeDivideByZero
+            userInfo:@{NSLocalizedDescriptionKey:@"NSDecimalNumber divide by zero exception"}];
+        }
         decimalNum2 = NSDecimalNumber.one;
     }
     
@@ -254,31 +305,32 @@ NS_INLINE FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber 
     return result;
 }
 
-- (NSDecimalNumber *)byDividesString:(NSString *)string {
-    NSDecimalNumber *decimalNum1 = [NSDecimalNumber decimalNumberWithString:self];
-    NSDecimalNumber *decimalNum2 = [NSDecimalNumber decimalNumberWithString:string];
+#pragma mark - rounding
+
+- (NSDecimalNumber *)roundingMode:(NSRoundingMode)mode afterPoint:(NSInteger)position error:(NSError *__autoreleasing  _Nullable * _Nullable)error {
+    NSDecimalNumber *ouncesDecimal = [NSDecimalNumber decimalNumberWithString:self];
     
-    //判断是否存在
-    if ([decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
-        if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
-            return decimalNum2;
-        }else {
-            return NSDecimalNumber.one;
-        }
-    }
-    if ([decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
-        if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
-            return decimalNum1;
-        }else {
-            return NSDecimalNumber.one;
-        }
-    }
-    if ([decimalNum2 isEqualToNumber:NSDecimalNumber.zero]) {
-        decimalNum2 = NSDecimalNumber.one;
-    }
+    return roundingDecimal(ouncesDecimal, mode, position, error);
+}
+
++ (NSDecimalNumber *)roundingDouble:(double)d mode:(NSRoundingMode)mode afterPoint:(NSInteger)position error:(NSError *__autoreleasing  _Nullable *)error {
+    NSDecimalNumber *ouncesDecimal = [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithDouble:d].decimalValue];
     
-    NSDecimalNumber *result = [decimalNum1 decimalNumberByDividingBy:decimalNum2];
-    return result;
+    return roundingDecimal(ouncesDecimal, mode, position, error);
+}
+
+inline NSDecimalNumber * roundingDecimal(NSDecimalNumber *ouncesDecimal,NSRoundingMode mode,NSInteger scale, NSError **error) {
+    NSDecimalNumberHandler* roundingBehavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:mode scale:scale raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    if ([ouncesDecimal isEqualToNumber:NSDecimalNumber.notANumber]) {
+        if (error) {
+            *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
+                code:DecimalErrorCodeFirstNotANumber
+            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+        }
+        ouncesDecimal = NSDecimalNumber.zero;
+    }
+    NSDecimalNumber *roundedOunces = [ouncesDecimal decimalNumberByRoundingAccordingToBehavior:roundingBehavior];
+    return roundedOunces;
 }
 
 @end
