@@ -44,7 +44,7 @@ NSString * const DecimalErrorDivideByZeroDomain = @"DecimalNumberDivideByZeroExc
 /// @param num2 num1 description
 inline FBCompareResult compareDecimal(NSDecimalNumber *num1, NSDecimalNumber *num2) {
     
-    FBCompareResult result = FBCompareResultDefult;
+    FBCompareResult result = FBCompareResultDefault;
     if ([num1 isEqualToNumber:NSDecimalNumber.notANumber] || [num2 isEqualToNumber:NSDecimalNumber.notANumber]) {
         result = FBCompareResultError;
         return result;

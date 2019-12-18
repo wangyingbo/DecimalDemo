@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**小数比较结果*/
 typedef NS_ENUM(NSInteger,FBCompareResult) {
     /**默认*/
-    FBCompareResultDefult = 0,
+    FBCompareResultDefault = 0,
     /**左边比右边大-递减*/
     FBCompareResultDescending,
     /**左边比右边小-递增*/
