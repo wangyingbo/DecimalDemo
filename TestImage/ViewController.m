@@ -10,12 +10,14 @@
 
 @interface ViewController ()
 @property (nonatomic, strong) UILabel *testLabel;
+@property (nonatomic, strong) NSMutableArray *array;
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
 //
 //    NSString *name = @"scanner.jpeg";
 //    UIImage *image = [UIImage imageNamed:name];
@@ -29,6 +31,19 @@
     //[self loadHtmlTOLabel];
     
     //[self get];
+    
+}
+
+- (void)testArrayAsync {
+    
+    self.array = [NSMutableArray array];
+    for(int i = 0; i < 50 ; i++) {
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            [self.array addObject:@(i)];
+            NSLog(@"adding - %lu  address - %p",(unsigned long)self.array.count,@(i));
+        });
+    }
+    
 }
 
 - (void)get {
