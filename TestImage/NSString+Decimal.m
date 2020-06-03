@@ -11,6 +11,10 @@
 NSString * const DecimalErrorNotANumberDomain = @"DecimalErrorNotANumberDomain";
 NSString * const DecimalErrorDivideByZeroDomain = @"DecimalNumberDivideByZeroException";
 
+static NSString * const kFirstError = @"the first parameter can not be a decimalNumber";
+static NSString * const kSecondError = @"the second parameter can not be a decimalNumber";
+static NSString * const kDivideByZeroError = @"NSDecimalNumber divide by zero exception";
+
 @implementation NSString (Decimal)
 
 #pragma mark - compare
@@ -107,7 +111,7 @@ inline NSDecimalNumber * addDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
                 code:DecimalErrorCodeFirstNotANumber
-            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+            userInfo:@{NSLocalizedDescriptionKey:kFirstError}];
         }
         if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum2;
@@ -119,7 +123,7 @@ inline NSDecimalNumber * addDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
                 code:DecimalErrorCodeSecondNotANumber
-            userInfo:@{NSLocalizedDescriptionKey:@"the second parameter is can not be a decimalNumber"}];
+            userInfo:@{NSLocalizedDescriptionKey:kSecondError}];
         }
         if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum1;
@@ -162,7 +166,7 @@ inline NSDecimalNumber * subtractDecimal(NSDecimalNumber *decimalNum1,NSDecimalN
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
                 code:DecimalErrorCodeFirstNotANumber
-            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+            userInfo:@{NSLocalizedDescriptionKey:kFirstError}];
         }
         if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return [NSDecimalNumber decimalNumberWithDecimal:[NSNumber numberWithFloat:-decimalNum2.floatValue].decimalValue];;
@@ -174,7 +178,7 @@ inline NSDecimalNumber * subtractDecimal(NSDecimalNumber *decimalNum1,NSDecimalN
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
                 code:DecimalErrorCodeSecondNotANumber
-            userInfo:@{NSLocalizedDescriptionKey:@"the second parameter is can not be a decimalNumber"}];
+            userInfo:@{NSLocalizedDescriptionKey:kSecondError}];
         }
         if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum1;
@@ -217,7 +221,7 @@ inline NSDecimalNumber * multiplyDecimal(NSDecimalNumber *decimalNum1,NSDecimalN
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
                 code:DecimalErrorCodeFirstNotANumber
-            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+            userInfo:@{NSLocalizedDescriptionKey:kFirstError}];
         }
         if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum2;
@@ -229,7 +233,7 @@ inline NSDecimalNumber * multiplyDecimal(NSDecimalNumber *decimalNum1,NSDecimalN
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
                 code:DecimalErrorCodeSecondNotANumber
-            userInfo:@{NSLocalizedDescriptionKey:@"the second parameter is can not be a decimalNumber"}];
+            userInfo:@{NSLocalizedDescriptionKey:kSecondError}];
         }
         if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum1;
@@ -272,7 +276,7 @@ inline NSDecimalNumber * divideDecimal(NSDecimalNumber *decimalNum1,NSDecimalNum
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
                 code:DecimalErrorCodeFirstNotANumber
-            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+            userInfo:@{NSLocalizedDescriptionKey:kFirstError}];
         }
         if (![decimalNum2 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum2;
@@ -284,7 +288,7 @@ inline NSDecimalNumber * divideDecimal(NSDecimalNumber *decimalNum1,NSDecimalNum
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
                 code:DecimalErrorCodeSecondNotANumber
-            userInfo:@{NSLocalizedDescriptionKey:@"the second parameter is can not be a decimalNumber"}];
+            userInfo:@{NSLocalizedDescriptionKey:kSecondError}];
         }
         if (![decimalNum1 isEqualToNumber:NSDecimalNumber.notANumber]) {
             return decimalNum1;
@@ -296,7 +300,7 @@ inline NSDecimalNumber * divideDecimal(NSDecimalNumber *decimalNum1,NSDecimalNum
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorDivideByZeroDomain
                 code:DecimalErrorCodeDivideByZero
-            userInfo:@{NSLocalizedDescriptionKey:@"NSDecimalNumber divide by zero exception"}];
+            userInfo:@{NSLocalizedDescriptionKey:kDivideByZeroError}];
         }
         decimalNum2 = NSDecimalNumber.one;
     }
@@ -325,7 +329,7 @@ inline NSDecimalNumber * roundingDecimal(NSDecimalNumber *ouncesDecimal,NSRoundi
         if (error) {
             *error = [NSError errorWithDomain:DecimalErrorNotANumberDomain
                 code:DecimalErrorCodeFirstNotANumber
-            userInfo:@{NSLocalizedDescriptionKey:@"the first parameter is can not be a decimalNumber"}];
+            userInfo:@{NSLocalizedDescriptionKey:kFirstError}];
         }
         ouncesDecimal = NSDecimalNumber.zero;
     }
