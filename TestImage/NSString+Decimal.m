@@ -324,6 +324,10 @@ inline NSDecimalNumber * divideDecimal(NSDecimalNumber *decimalNum1,NSDecimalNum
 }
 
 inline NSDecimalNumber * roundingDecimal(NSDecimalNumber *ouncesDecimal,NSRoundingMode mode,NSInteger scale, NSError **error) {
+    return roundingDecimalHandler(ouncesDecimal, mode, scale, NO, NO, NO, NO, error);
+}
+
+inline NSDecimalNumber * roundingDecimalHandler(NSDecimalNumber *ouncesDecimal,NSRoundingMode mode,NSInteger scale,bool raiseOnExactness,bool raiseOnOverflow,bool raiseOnUnderflow,bool raiseOnDivideByZero, NSError **error) {
     NSDecimalNumberHandler* roundingBehavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:mode scale:scale raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     if ([ouncesDecimal isEqualToNumber:NSDecimalNumber.notANumber]) {
         if (error) {

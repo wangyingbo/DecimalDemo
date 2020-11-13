@@ -52,6 +52,7 @@ extern NSDecimalNumber * subtractDecimal(NSDecimalNumber *decimalNum1,NSDecimalN
 extern NSDecimalNumber * multiplyDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error);
 extern NSDecimalNumber * divideDecimal(NSDecimalNumber *decimalNum1,NSDecimalNumber *decimalNum2,NSError **error);
 extern NSDecimalNumber * roundingDecimal(NSDecimalNumber *ouncesDecimal,NSRoundingMode mode,NSInteger scale, NSError **error);
+extern NSDecimalNumber * roundingDecimalHandler(NSDecimalNumber *ouncesDecimal,NSRoundingMode mode,NSInteger scale,bool raiseOnExactness,bool raiseOnOverflow,bool raiseOnUnderflow,bool raiseOnDivideByZero, NSError **error);
 
 #pragma mark - compare
 
