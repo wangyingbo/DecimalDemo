@@ -18,6 +18,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+    NSString * jsonStr = @"{\"9.70\":9.70,\"67.10\":67.10, \"90.10\":90.10, \"97.40\":97.40, \"99.40\":99.40}";
+    NSData * jsonData = [jsonStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:nil];
+    NSLog(@"json:%@",json);
+    
     NSString *string = @"1.2";
     double a = -1.2;
     double b = 1.2000;
